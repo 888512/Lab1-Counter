@@ -4,28 +4,28 @@
 
 int main(int argc, char **argv, char **env)
 {
-    int i;
-    int clk;
     // i count the number of clock cycles to simulate
     // clk is the module clock signal
+    int i;
+    int clk;
 
-    Verilated::commandArgs(argc, argv);
     // init top verilog instance
-    Vcounter *top = new Vcounter;
+    Verilated::commandArgs(argc, argv);
     // init trace dump
-    Verilated::traceEverOn(true);
+    Vcounter *top = new Vcounter;
     // enable tracing globally
-    VerilatedVcdC *tfp = new VerilatedVcdC;
+    Verilated::traceEverOn(true);
     // DUT part (not mandatory if don't want to see the waveforms)
-    //  create the trace writer, where VerilatedVcdC writes a Value Change Dump(VCD) file --> turns simulation into a waveform
-    top->trace(tfp, 99);
+    // create the trace writer, where VerilatedVcdC writes a Value Change Dump(VCD) file --> turns simulation into a waveform
+    VerilatedVcdC *tfp = new VerilatedVcdC;
     // attach it to the Device Under Test(DUT)
-    tfp->open("counter.vcd");
+    top->trace(tfp, 99);
     // open the output file
+    tfp->open("counter.vcd");
 
     // initialise simulation inputs, top for top-level entity (only top-level signals visible)
     top->clk = 1;
-    top->rst = 1;
+    top->rst_n = 1;
     top->en = 0;
 
     // run simulation for many clock cycles
@@ -41,7 +41,7 @@ int main(int argc, char **argv, char **env)
             top->eval();
         }
         // change rst and en signals during simulation
-        top->rst = (i < 2) | (i == 15);
+        top->rst_n = (i < 2) | (i == 15);
         top->en = (i > 4);
         if (Verilated::gotFinish())
             exit(0);
