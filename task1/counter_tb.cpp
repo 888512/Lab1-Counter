@@ -41,11 +41,14 @@ int main(int argc, char **argv, char **env)
             top->eval();
         }
         // change rst and en signals during simulation
+        // rst false from i = 2 until 15, iteration i=2 dumps at 4ps and 5ps, rst =0 at the end of the iteration which is 6ps
         top->rst = (i < 2) | (i == 15);
+        // en true when i=5 (10ps and 11ps) so end of i=5 en=1 when 12ps
         top->en = (i > 4);
         if (Verilated::gotFinish())
             exit(0);
     }
     tfp->close();
     exit(0);
+    // count goes from 00 to 01 in the next risiong clock cycle (14ps) after en=1 and rst=0
 }
